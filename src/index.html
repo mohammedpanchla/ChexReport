@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CheXReport AI — Flowgenix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,600;0,700;1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #f5f6f8;
+  --surface:  #ffffff;
+  --border:   #e2e5eb;
+  --border2:  #cdd1da;
+  --text:     #111318;
+  --text-mid: #454c5c;
+  --text-dim: #8a93a6;
+  --accent:   #1a56db;
+  --accent-l: #3b76f6;
+  --teal:     #0e9a8c;
+  --teal-l:   #14b8a6;
+  --green:    #16a34a;
+  --red:      #dc2626;
+  --amber:    #d97706;
+  --glow:     rgba(14,154,140,0.12);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── TOP BAR ── */
+.top-bar{height:2px;background:linear-gradient(90deg,var(--accent) 0%,var(--teal) 50%,var(--teal-l) 100%)}
+
+/* ── NAV ── */
+nav{background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1240px;margin:0 auto;padding:0 36px;height:58px;display:flex;align-items:center;justify-content:space-between}
+
+.nav-logo{display:flex;align-items:center;gap:14px}
+.nav-logo-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;position:relative}
+.nav-logo-icon svg{width:36px;height:36px}
+.nav-logo-text{display:flex;flex-direction:column;gap:1px}
+.nav-logo-name{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text);letter-spacing:-0.3px;line-height:1}
+.nav-logo-sub{font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+
+.nav-center{display:flex;align-items:center;gap:6px}
+.nav-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--text-mid);padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg)}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;position:relative;flex-shrink:0}
+.live-dot::after{content:'';position:absolute;inset:-3px;border-radius:50%;background:var(--green);opacity:.25;animation:ripple 2s ease-out infinite}
+@keyframes ripple{0%{transform:scale(1);opacity:.25}100%{transform:scale(2.8);opacity:0}}
+
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-link{font-size:12px;font-weight:500;letter-spacing:.5px;color:var(--text-dim);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--text)}
+.nav-cta{font-size:12px;font-weight:600;padding:7px 16px;background:var(--text);color:#fff;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:all .2s}
+.nav-cta:hover{background:var(--text-mid)}
+
+/* ── WRAP ── */
+.wrap{max-width:1240px;margin:0 auto;padding:0 36px}
+
+/* ── HERO ── */
+.hero{padding:72px 0 60px;display:grid;grid-template-columns:1fr 480px;gap:72px;align-items:center}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:22px}
+.eyebrow-dash{width:20px;height:1.5px;background:var(--teal)}
+
+.hero-title{font-family:'Fraunces',serif;font-size:62px;line-height:1.02;letter-spacing:-2px;color:var(--text);margin-bottom:22px;font-weight:700}
+.hero-title em{font-style:italic;color:var(--teal)}
+
+.hero-desc{font-size:15px;line-height:1.8;color:var(--text-mid);max-width:460px;margin-bottom:40px;font-weight:300}
+
+.hero-stats{display:flex;align-items:center;gap:28px}
+.h-stat-val{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;color:var(--text);letter-spacing:-1px;line-height:1;margin-bottom:4px}
+.h-stat-lbl{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.h-sep{width:1px;height:28px;background:var(--border2)}
+
+/* ── XRAY CARD ── */
+.xray-card{background:#0b0e14;border-radius:18px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 24px 64px rgba(0,0,0,0.28),0 0 60px var(--glow)}
+.xc-header{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05)}
+.xc-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.xc-dots{display:flex;gap:5px}
+.xc-dots span{width:8px;height:8px;border-radius:50%}
+.xc-dots span:nth-child(1){background:#ff5f57;opacity:.8}
+.xc-dots span:nth-child(2){background:#febc2e;opacity:.8}
+.xc-dots span:nth-child(3){background:#28c840;opacity:.8}
+
+.xc-viewport{position:relative;height:300px;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
+
+/* Grid only inside card */
+.xc-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(20,184,166,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(20,184,166,0.05) 1px,transparent 1px);background-size:28px 28px}
+
+/* Simulated X-ray body */
+.xray-body{width:180px;height:260px;position:relative;opacity:.6}
+.xr-spine{position:absolute;left:46%;top:4%;width:8%;height:92%;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.18));border-radius:4px}
+.xr-heart{position:absolute;left:28%;top:22%;width:44%;height:52%;background:radial-gradient(ellipse at 45% 50%,rgba(255,255,255,.22) 0%,rgba(255,255,255,.06) 65%,transparent 100%);border-radius:50%}
+.xr-rib{position:absolute;left:5%;height:3px;border-radius:2px;background:rgba(255,255,255,.18)}
+.xr-rib:nth-child(1){top:8%;width:90%}
+.xr-rib:nth-child(2){top:20%;width:92%}
+.xr-rib:nth-child(3){top:32%;width:88%}
+.xr-rib:nth-child(4){top:44%;width:82%}
+.xr-rib:nth-child(5){top:56%;width:76%}
+.xr-rib:nth-child(6){top:68%;width:68%}
+
+/* Scan line ONLY on the card */
+.xc-scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal-l),transparent);opacity:.9;box-shadow:0 0 10px var(--teal-l),0 0 20px rgba(20,184,166,.3);animation:scanDown 3s ease-in-out infinite;top:0}
+@keyframes scanDown{0%{top:0%;opacity:0}8%{opacity:.9}90%{opacity:.9}100%{top:100%;opacity:0}}
+
+/* Corners on card */
+.xc-corner{position:absolute;width:14px;height:14px;border-color:rgba(20,184,166,.6);border-style:solid}
+.xc-corner.tl{top:8px;left:8px;border-width:1.5px 0 0 1.5px}
+.xc-corner.tr{top:8px;right:8px;border-width:1.5px 1.5px 0 0}
+.xc-corner.bl{bottom:8px;left:8px;border-width:0 0 1.5px 1.5px}
+.xc-corner.br{bottom:8px;right:8px;border-width:0 1.5px 1.5px 0}
+
+.xc-pip{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.75);border:1px solid rgba(20,184,166,.25);border-radius:6px;padding:7px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--teal-l);line-height:1.7}
+
+.xc-footer{padding:12px 18px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
+.xc-footer-text{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.5px}
+.xc-status-badge{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:4px;background:rgba(22,163,74,.12);color:#4ade80;border:1px solid rgba(22,163,74,.2)}
+
+/* ── ARCH STRIP ── */
+.arch-strip{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0;margin-bottom:52px}
+.arch-inner{display:flex}
+.arch-step{flex:1;display:flex;align-items:center;gap:14px;padding:20px 24px;border-right:1px solid var(--border);transition:background .2s}
+.arch-step:last-child{border-right:none}
+.arch-step:hover{background:#fafbfc}
+.arch-num{width:26px;height:26px;border-radius:50%;background:var(--text);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.arch-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.arch-sub{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+
+/* ── SECTION HEAD ── */
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px}
+.section-eyebrow{font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.section-title{font-family:'Fraunces',serif;font-size:34px;color:var(--text);letter-spacing:-0.5px;font-weight:700}
+.section-right{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);text-align:right;line-height:1.7}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:52px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:all .25s;position:relative;overflow:hidden;cursor:default}
+.stat-card:hover{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,154,140,0.06)}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--teal));opacity:0;transition:opacity .3s}
+.stat-card:hover::after{opacity:1}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:500;color:var(--text);letter-spacing:-.5px;margin-bottom:5px}
+.stat-lbl{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim)}
+
+/* ── MAIN GRID ── */
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+
+/* ── PANEL ── */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow .3s}
+.panel:hover{box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.panel-head{padding:14px 22px;border-bottom:1px solid var(--border);background:#fafbfc;display:flex;align-items:center;justify-content:space-between}
+.panel-left{display:flex;align-items:center;gap:9px}
+.p-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal)}
+.p-dot.dim{background:var(--border2);box-shadow:none}
+.p-dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.panel-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid)}
+.panel-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);background:var(--bg);border:1px solid var(--border);padding:3px 9px;border-radius:4px}
+.panel-body{padding:18px}
+
+/* ── UPLOAD ── */
+.upload-zone{border:1.5px dashed var(--border2);border-radius:10px;min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:pointer;transition:all .25s;background:var(--bg);position:relative;overflow:hidden}
+.upload-zone:hover{border-color:var(--teal);background:#f0fdfb;box-shadow:0 0 0 4px rgba(14,154,140,.05)}
+.upload-zone.dragover{border-color:var(--teal);background:#f0fdfb;box-shadow:0 0 0 4px rgba(14,154,140,.08),0 0 30px var(--glow)}
+.upload-zone.has-image{border:none;background:#000;padding:0}
+.upload-zone.has-image img{width:100%;min-height:270px;object-fit:contain;border-radius:8px;display:block}
+.up-icon{width:52px;height:52px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px}
+.up-main{font-size:13px;font-weight:500;color:var(--text-mid);margin-bottom:4px;text-align:center}
+.up-sub{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-align:center}
+input[type=file]{display:none}
+
+/* ── BUTTON ── */
+.gen-btn{width:100%;margin-top:12px;padding:13px 20px;background:var(--text);border:none;border-radius:9px;color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;letter-spacing:.2px}
+.gen-btn:hover:not(:disabled){background:var(--text-mid);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed}
+.spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── STATUS BAR ── */
+.p-status{padding:10px 18px;background:#fafbfc;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim)}
+.p-status-left{display:flex;align-items:center;gap:7px}
+.s-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.s-dot.loading{background:var(--amber);animation:blink 1s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── OUTPUT ── */
+.report-wrap{min-height:270px;border-radius:8px;border:1px solid var(--border);background:var(--bg);position:relative;overflow:hidden}
+.r-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.r-empty-icon{font-size:32px;opacity:.1}
+.r-empty-text{font-size:11px;color:var(--text-dim);letter-spacing:.5px}
+.wave{position:absolute;bottom:0;left:0;right:0;height:36px;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 16px 8px;opacity:.1}
+.wave-bar{width:2px;background:var(--teal);border-radius:1px;animation:wv 1.5s ease-in-out infinite}
+.wave-bar:nth-child(2n){animation-delay:.2s}
+.wave-bar:nth-child(3n){animation-delay:.4s}
+@keyframes wv{0%,100%{height:3px}50%{height:18px}}
+.r-content{padding:18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:var(--text-mid);min-height:270px;display:none;white-space:pre-wrap;word-break:break-word}
+.r-content.show{display:block}
+.r-scan{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--bg)}
+.r-scan.show{display:flex}
+.r-rings{width:56px;height:56px;position:relative}
+.r-ring1{position:absolute;inset:0;border:2px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin 1.2s linear infinite}
+.r-ring2{position:absolute;inset:8px;border:1.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite reverse}
+.r-scan-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
+.r-steps{display:flex;flex-direction:column;gap:7px;width:180px}
+.r-step{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);opacity:.35;transition:all .4s}
+.r-step.active{opacity:1;color:var(--teal)}
+.r-step.done{opacity:.65;color:var(--green)}
+.r-step-dot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── WARNING ── */
+.warning{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;display:flex;gap:10px;font-size:12px;line-height:1.6;color:#78350f;margin-bottom:16px}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px 0;margin-top:8px}
+.foot-inner{display:flex;align-items:center;justify-content:space-between}
+.foot-left{font-size:12px;color:var(--text-dim)}
+.foot-left a{color:var(--teal);text-decoration:none}
+.foot-right{display:flex;gap:8px}
+.foot-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:4px}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(18px);animation:rv .65s cubic-bezier(.22,1,.36,1) forwards}
+.reveal:nth-child(1){animation-delay:.0s}
+.reveal:nth-child(2){animation-delay:.08s}
+.reveal:nth-child(3){animation-delay:.16s}
+.reveal:nth-child(4){animation-delay:.24s}
+.reveal:nth-child(5){animation-delay:.32s}
+@keyframes rv{to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="9" fill="#0f172a"/>
+          <path d="M10 22c0-4 2-7 5-8.5C16 12.5 17 12 18 12s2 .5 3 1.5c3 1.5 5 4.5 5 8.5" stroke="#14b8a6" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M7 19h4l2-4 3 8 2-6 2 4h3l2-3h4" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+          <circle cx="18" cy="22" r="2.5" fill="none" stroke="#14b8a6" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="nav-logo-text">
+        <div class="nav-logo-name">CheXReport</div>
+        <div class="nav-logo-sub">Medical AI · Flowgenix</div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <div class="nav-pill">
+        <div class="live-dot"></div>
+        Model Active · Epoch 9 · Val 0.675
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <a href="https://www.linkedin.com/in/flowgenix-ai-b51517278" target="_blank" class="nav-link">Muhammed Panchla</a>
+      <div class="nav-cta">Research Preview</div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="reveal">
+      <div class="hero-eyebrow"><div class="eyebrow-dash"></div>Multimodal Medical Intelligence</div>
+      <h1 class="hero-title">From X-Ray<br/>to Radiology<br/><em>Report.</em></h1>
+      <p class="hero-desc">Upload a chest X-ray and CheXReport generates a structured radiology findings report. Built on DenseNet121 and BioGPT — trained on 15 million biomedical abstracts from PubMed.</p>
+      <div class="hero-stats">
+        <div class="h-stat"><div class="h-stat-val">6,687</div><div class="h-stat-lbl">Training Scans</div></div>
+        <div class="h-sep"></div>
+        <div class="h-stat"><div class="h-stat-val">72M</div><div class="h-stat-lbl">Parameters</div></div>
+        <div class="h-sep"></div>
+        <div class="h-stat"><div class="h-stat-val">0.675</div><div class="h-stat-lbl">Val Loss</div></div>
+        <div class="h-sep"></div>
+        <div class="h-stat"><div class="h-stat-val">10 ep</div><div class="h-stat-lbl">Training</div></div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="xray-card">
+        <div class="xc-header">
+          <div class="xc-title">PA Chest View · Live Analysis</div>
+          <div class="xc-dots"><span></span><span></span><span></span></div>
+        </div>
+        <div class="xc-viewport">
+          <div class="xc-grid"></div>
+          <div class="xray-body">
+            <div class="xr-spine"></div>
+            <div class="xr-heart"></div>
+            <div class="xr-rib"></div><div class="xr-rib"></div><div class="xr-rib"></div>
+            <div class="xr-rib"></div><div class="xr-rib"></div><div class="xr-rib"></div>
+          </div>
+          <div class="xc-scanline"></div>
+          <div class="xc-corner tl"></div><div class="xc-corner tr"></div>
+          <div class="xc-corner bl"></div><div class="xc-corner br"></div>
+          <div class="xc-pip">RES&nbsp;&nbsp;&nbsp;&nbsp;512 × 512<br/>MODE&nbsp;&nbsp;&nbsp;DX · PA<br/>ENC&nbsp;&nbsp;&nbsp;&nbsp;DenseNet121<br/>STATUS&nbsp;<span style="color:#4ade80">READY</span></div>
+        </div>
+        <div class="xc-footer">
+          <div class="xc-footer-text">CheXReport · BioGPT · Beam×4 · IU X-Ray</div>
+          <div class="xc-status-badge">AI Ready</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ARCH STRIP -->
+<div class="arch-strip">
+  <div class="wrap">
+    <div class="arch-inner">
+      <div class="arch-step"><div class="arch-num">01</div><div><div class="arch-name">X-Ray Input</div><div class="arch-sub">PNG · JPG · any size</div></div></div>
+      <div class="arch-step"><div class="arch-num">02</div><div><div class="arch-name">DenseNet121</div><div class="arch-sub">1024-dim embedding</div></div></div>
+      <div class="arch-step"><div class="arch-num">03</div><div><div class="arch-name">Projection Layer</div><div class="arch-sub">LN → Linear → GELU</div></div></div>
+      <div class="arch-step"><div class="arch-num">04</div><div><div class="arch-name">BioGPT Decoder</div><div class="arch-sub">Beam search ×4</div></div></div>
+      <div class="arch-step"><div class="arch-num">05</div><div><div class="arch-name">Radiology Report</div><div class="arch-sub">Clinical findings text</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- SECTION HEAD -->
+  <div class="section-head reveal">
+    <div><div class="section-eyebrow">Live Inference</div><div class="section-title">Upload &amp; Generate</div></div>
+    <div class="section-right">DenseNet121 · Projection · BioGPT<br/>IU X-Ray · M2 MPS · PyTorch</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row reveal">
+    <div class="stat-card"><div class="stat-val">DenseNet</div><div class="stat-lbl">Vision Encoder</div></div>
+    <div class="stat-card"><div class="stat-val">BioGPT</div><div class="stat-lbl">Language Model</div></div>
+    <div class="stat-card"><div class="stat-val">IU X-Ray</div><div class="stat-lbl">Dataset</div></div>
+    <div class="stat-card"><div class="stat-val">Beam ×4</div><div class="stat-lbl">Decoding</div></div>
+    <div class="stat-card"><div class="stat-val">0.675</div><div class="stat-lbl">Best Val Loss</div></div>
+  </div>
+
+  <!-- INTERFACE -->
+  <div class="main-grid reveal">
+
+    <!-- UPLOAD -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-left"><div class="p-dot"></div><div class="panel-label">Input — Chest X-Ray</div></div>
+        <div class="panel-chip">224×224 · Grayscale</div>
+      </div>
+      <div class="panel-body">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fi').click()">
+          <input type="file" id="fi" accept="image/*" onchange="handleFile(event)"/>
+          <div class="up-icon">🩻</div>
+          <div><div class="up-main">Drop chest X-ray here</div><div class="up-sub">PNG · JPG · JPEG</div></div>
+        </div>
+        <button class="gen-btn" id="genBtn" onclick="gen()" disabled>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>
+          Generate Radiology Report
+        </button>
+      </div>
+      <div class="p-status">
+        <div class="p-status-left"><div class="s-dot" id="sDot"></div><span id="sTxt">Model ready · val_loss 0.6757 · epoch 9</span></div>
+        <span>PyTorch · M2 MPS</span>
+      </div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="panel" style="display:flex;flex-direction:column;">
+      <div class="panel-head">
+        <div class="panel-left"><div class="p-dot dim" id="outDot"></div><div class="panel-label">Generated Radiology Report</div></div>
+        <div class="panel-chip" id="outChip">awaiting scan</div>
+      </div>
+
+      <!-- REPORT TEXT — fills all space like xray image -->
+      <div class="report-wrap" style="flex:1;margin:18px;border-radius:10px;border:1px solid var(--border);background:var(--bg);position:relative;overflow:hidden;min-height:370px;">
+        <div class="r-empty" id="rEmpty">
+          <div class="r-empty-icon">📋</div>
+          <div class="r-empty-text">Report will appear here</div>
+          <div class="wave">
+            <div class="wave-bar" style="height:5px"></div><div class="wave-bar" style="height:12px"></div>
+            <div class="wave-bar" style="height:7px"></div><div class="wave-bar" style="height:16px"></div>
+            <div class="wave-bar" style="height:9px"></div><div class="wave-bar" style="height:18px"></div>
+            <div class="wave-bar" style="height:7px"></div><div class="wave-bar" style="height:13px"></div>
+            <div class="wave-bar" style="height:5px"></div><div class="wave-bar" style="height:15px"></div>
+            <div class="wave-bar" style="height:9px"></div><div class="wave-bar" style="height:17px"></div>
+          </div>
+        </div>
+        <div class="r-scan" id="rScan">
+          <div class="r-rings"><div class="r-ring1"></div><div class="r-ring2"></div></div>
+          <div class="r-scan-text">Analysing...</div>
+          <div class="r-steps">
+            <div class="r-step" id="s1"><div class="r-step-dot"></div>Encoding X-Ray image</div>
+            <div class="r-step" id="s2"><div class="r-step-dot"></div>Projecting to LM space</div>
+            <div class="r-step" id="s3"><div class="r-step-dot"></div>Decoding report tokens</div>
+          </div>
+        </div>
+        <textarea id="rContent" spellcheck="false" style="display:none;width:100%;height:100%;min-height:370px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:var(--text-mid);background:transparent;border:none;outline:none;resize:none;box-sizing:border-box;"></textarea>
+      </div>
+
+      <!-- DOWNLOAD BUTTONS — same position as Generate button on left panel -->
+      <div id="dlBar" style="display:none;gap:8px;padding:0 18px 12px 18px;">
+        <button onclick="dlPDF()" style="width:100%;padding:13px 20px;background:var(--text);border:none;border-radius:9px;color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">⬇ Download PDF Report</button>
+        <div style="display:flex;gap:8px;">
+          <button onclick="dlTXT()" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text-mid);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">⬇ TXT</button>
+          <button onclick="dlJSON()" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text-mid);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">⬇ JSON</button>
+        </div>
+      </div>
+
+      <!-- STATUS BAR — same as left panel -->
+      <div class="p-status">
+        <div class="p-status-left"><div class="s-dot" id="outSDot" style="background:var(--border2)"></div><span id="outStat">Waiting for upload...</span></div>
+        <span id="wc">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning reveal">
+    <span>⚠️</span>
+    <div><strong>Research use only.</strong> Not a certified medical device. All outputs must be reviewed by a qualified radiologist before any clinical decision is made.</div>
+  </div>
+
+  <footer class="reveal">
+    <div class="foot-inner">
+      <div class="foot-left">Built by <strong>Muhammed Panchla</strong> · <a href="https://www.linkedin.com/in/flowgenix-ai-b51517278" target="_blank">Flowgenix AI</a> · DenseNet121 · BioGPT · IU X-Ray · PyTorch</div>
+      <div class="foot-right"><span class="foot-chip">v1.0</span><span class="foot-chip">2026</span></div>
+    </div>
+  </footer>
+</div>
+
+<script>
+const zone=document.getElementById('uploadZone');
+let file=null;
+
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover')});
+zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))load(f)});
+function handleFile(e){const f=e.target.files[0];if(f)load(f)}
+function load(f){file=f;const r=new FileReader();r.onload=e=>{zone.classList.add('has-image');zone.innerHTML=`<img src="${e.target.result}" alt="X-Ray"/>`;document.getElementById('genBtn').disabled=false};r.readAsDataURL(f)}
+
+function stepAnim(){
+  const st=['s1','s2','s3'];let i=0;
+  const iv=setInterval(()=>{
+    if(i>0)document.getElementById(st[i-1]).className='r-step done';
+    if(i<st.length){document.getElementById(st[i]).className='r-step active';i++}
+    else clearInterval(iv);
+  },1300);
+}
+
+async function gen(){
+  if(!file)return;
+  const btn=document.getElementById('genBtn'),sDot=document.getElementById('sDot'),sTxt=document.getElementById('sTxt');
+  const rEmpty=document.getElementById('rEmpty'),rScan=document.getElementById('rScan'),rContent=document.getElementById('rContent');
+  const outDot=document.getElementById('outDot'),outChip=document.getElementById('outChip');
+  const outStat=document.getElementById('outStat'),outSDot=document.getElementById('outSDot'),wc=document.getElementById('wc');
+
+  ['s1','s2','s3'].forEach(s=>document.getElementById(s).className='r-step');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner"></div> Analysing...';
+  sDot.classList.add('loading');sTxt.textContent='Running inference...';
+  rEmpty.style.display='none';rScan.classList.add('show');
+  outChip.textContent='generating...';outStat.textContent='Vision encoder → projection → BioGPT...';
+  stepAnim();
+
+  try{
+    const fd=new FormData();fd.append('file',file);
+    const pr=await fetch('/predict',{method:'POST',body:fd});
+    if(!pr.ok)throw new Error('Server error '+pr.status);
+    const report=(await pr.json()).report;
+
+    rScan.classList.remove('show');rContent.style.display='block';
+    outDot.className='p-dot green';outSDot.style.background='var(--green)';
+
+    const words=report.split(' ');rContent.value='';let i=0;
+    function tw(){if(i<words.length){rContent.value+=(i===0?'':' ')+words[i++];setTimeout(tw,28)}
+    else{outChip.textContent='complete';outStat.textContent='Done · '+words.length+' words';wc.textContent=words.length+' words';
+      document.getElementById('dlBar').style.display='flex';
+      document.getElementById('dlBar').style.flexDirection='column';
+    }}
+    tw();
+  }catch(e){
+    rScan.classList.remove('show');rContent.style.display='block';
+    rContent.style.color='var(--red)';
+    rContent.value='Error: '+e.message+'\n\nEnsure app.py is running in your terminal.';
+    outChip.textContent='error';outStat.textContent='Failed';
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg> Generate Radiology Report';
+  sDot.classList.remove('loading');sTxt.textContent='Model ready · val_loss 0.6757 · epoch 9';
+}
+
+const patientID='PT-'+Math.random().toString(36).substr(2,8).toUpperCase();
+const studyDate=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+function getReport(){return document.getElementById('rContent').value.trim()}
+
+function dlTXT(){
+  dl(new Blob([`CHEXREPORT AI — RADIOLOGY REPORT\n${'─'.repeat(48)}\nPatient ID : ${patientID}\nStudy Date : ${studyDate}\nModality   : Chest X-Ray (PA/AP)\nModel      : DenseNet121 + BioGPT v1.0\n${'─'.repeat(48)}\n\n${getReport()}\n\nAI DISCLAIMER: Research use only. Not a certified medical device.`],{type:'text/plain'}),'chexreport.txt');
+}
+function dlJSON(){
+  const r=getReport();const sec={INDICATION:'',COMPARISON:'',FINDINGS:'',IMPRESSION:''};let cur='';
+  r.split('\n').forEach(l=>{const t=l.trim();if(sec.hasOwnProperty(t)){cur=t}else if(cur&&t&&!t.startsWith('─')&&!t.startsWith('AI')&&!t.startsWith('MODALITY')&&!t.startsWith('DATE')){sec[cur]+=(sec[cur]?' ':'')+t}});
+  dl(new Blob([JSON.stringify({generated_by:'CheXReport AI v1.0',model:'DenseNet121+BioGPT',patient_id:patientID,study_date:studyDate,modality:'Chest X-Ray (PA/AP)',...sec,disclaimer:'Research use only.'},null,2)],{type:'application/json'}),'chexreport.json');
+}
+function dlPDF(){
+  const r=getReport();const sec={INDICATION:'',COMPARISON:'',FINDINGS:'',IMPRESSION:''};let cur='';
+  r.split('\n').forEach(l=>{const t=l.trim();if(sec.hasOwnProperty(t)){cur=t}else if(cur&&t&&!t.startsWith('─')&&!t.startsWith('AI')&&!t.startsWith('MODALITY')&&!t.startsWith('DATE')){sec[cur]+=(sec[cur]?' ':'')+t}});
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>CheXReport</title><style>body{font-family:'Times New Roman',serif;max-width:720px;margin:48px auto;padding:0 40px;color:#111;font-size:13px;line-height:1.8}.hd{border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:20px;display:flex;justify-content:space-between}.logo{font-size:20px;font-weight:700}.sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#666}.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:14px 16px;background:#f8f8f8;border-radius:4px;margin-bottom:20px;font-size:12px}.ml label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:2px}h3{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:5px;margin:20px 0 8px}p{margin:0;white-space:pre-wrap}.disc{margin-top:28px;padding:10px 14px;background:#fffbeb;border-left:3px solid #d97706;font-size:11px;color:#78350f}.ft{margin-top:32px;border-top:1px solid #ddd;padding-top:10px;font-size:10px;color:#999;display:flex;justify-content:space-between}@media print{body{margin:0}}</style></head><body><div class="hd"><div><div class="logo">CheXReport AI</div><div class="sub">Medical AI · Flowgenix</div></div><div style="font-size:11px;color:#666;text-align:right">Radiology Report<br/>${studyDate}</div></div><div class="meta"><div class="ml"><label>Patient ID</label>${patientID}</div><div class="ml"><label>Study Date</label>${studyDate}</div><div class="ml"><label>Modality</label>Chest X-Ray (PA/AP)</div><div class="ml"><label>Model</label>DenseNet121 + BioGPT v1.0</div></div><h3>Indication</h3><p>${sec.INDICATION||'Chest X-ray for clinical evaluation.'}</p><h3>Comparison</h3><p>${sec.COMPARISON||'No prior studies available.'}</p><h3>Findings</h3><p>${sec.FINDINGS||'See report.'}</p><h3>Impression</h3><p>${sec.IMPRESSION||'Clinical correlation recommended.'}</p><div class="disc">⚠ <strong>AI Disclaimer:</strong> Generated by AI for research only. Not a certified medical device. All findings must be verified by a qualified radiologist.</div><div class="ft"><span>CheXReport AI v1.0 — Flowgenix</span><span>Muhammed Panchla · ${studyDate}</span></div></body></html>`);
+  w.document.close();setTimeout(()=>w.print(),600);
+}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click()}
+</script>
+</body>
+</html>
