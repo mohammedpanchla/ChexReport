@@ -1,12 +1,4 @@
----
-title: CheXReport AI
-emoji: 🫁
-colorFrom: blue
-colorTo: green
-sdk: gradio
-app_file: app.py
-pinned: true
----
+
 
 <div align="center">
 
